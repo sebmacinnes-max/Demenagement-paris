@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paris Express Déménagement — Experts du déménagement à Paris</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --black: #0A0A0A;
+      --white: #FFFFFF;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-400: #9CA3AF;
+      --gray-600: #4B5563;
+      --gray-800: #1F2937;
+      --blue: #2563EB;
+      --blue-light: #EFF6FF;
+      --blue-dark: #1D4ED8;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --radius: 16px;
+      --radius-sm: 8px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font); background: var(--white); color: var(--black); overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── NAVIGATION ─── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 72px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid transparent;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .navbar.scrolled {
+      border-color: var(--gray-200);
+      box-shadow: 0 1px 32px rgba(0,0,0,0.06);
+    }
+    .nav-logo {
+      font-weight: 800; font-size: 18px; letter-spacing: -0.5px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo-mark {
+      width: 32px; height: 32px; background: var(--blue); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo-mark svg { width: 18px; height: 18px; fill: white; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--gray-600);
+      transition: color var(--transition); position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+      height: 2px; background: var(--blue); transform: scaleX(0);
+      transition: transform var(--transition); transform-origin: left;
+    }
+    .nav-links a:hover { color: var(--black); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-cta {
+      background: var(--black); color: var(--white);
+      padding: 10px 22px; border-radius: 100px;
+      font-size: 14px; font-weight: 600; letter-spacing: -0.1px;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+    .nav-cta:hover { background: var(--blue); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,0.3); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; padding: 8px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--black); border-radius: 2px; transition: var(--transition); }
+
+    /* ─── MOBILE NAV ─── */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; background: var(--white); z-index: 999;
+      flex-direction: column; align-items: center; justify-content: center; gap: 32px;
+      opacity: 0; transition: opacity var(--transition);
+    }
+    .mobile-menu.open { display: flex; opacity: 1; }
+    .mobile-menu a { font-size: 28px; font-weight: 700; letter-spacing: -1px; }
+    .mobile-close { position: absolute; top: 24px; right: 24px; font-size: 28px; font-weight: 300; color: var(--gray-400); cursor: pointer; }
+
+    /* ─── SECTIONS NAV ─── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+      padding-top: 72px; overflow: hidden; position: relative;
+    }
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 80px 64px 80px 80px; position: relative; z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--blue-light); color: var(--blue); border-radius: 100px;
+      padding: 6px 16px; font-size: 13px; font-weight: 600; letter-spacing: 0.3px;
+      margin-bottom: 36px; width: fit-content;
+    }
+    .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.2)} }
+    .hero-title {
+      font-size: clamp(44px, 5vw, 72px); font-weight: 900; line-height: 1.02;
+      letter-spacing: -2.5px; margin-bottom: 28px;
+    }
+    .hero-title em { font-style: normal; color: var(--blue); }
+    .hero-sub {
+      font-size: 18px; font-weight: 400; color: var(--gray-600); line-height: 1.65;
+      max-width: 440px; margin-bottom: 44px;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--blue); color: var(--white); padding: 16px 36px;
+      border-radius: 100px; font-size: 16px; font-weight: 700;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      display: inline-flex; align-items: center; gap: 8px; letter-spacing: -0.2px;
+    }
+    .btn-primary:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,99,235,0.35); }
+    .btn-secondary {
+      background: transparent; color: var(--black); padding: 16px 36px;
+      border-radius: 100px; font-size: 16px; font-weight: 600;
+      border: 2px solid var(--gray-200);
+      transition: border-color var(--transition), transform var(--transition);
+      letter-spacing: -0.2px;
+    }
+    .btn-secondary:hover { border-color: var(--black); transform: translateY(-2px); }
+    .hero-stats { display: flex; gap: 40px; margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--gray-200); }
+    .hero-stat-number { font-size: 36px; font-weight: 900; letter-spacing: -1.5px; color: var(--black); }
+    .hero-stat-label { font-size: 13px; color: var(--gray-400); font-weight: 500; margin-top: 4px; }
+    .hero-right {
+      background: var(--gray-50); position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-visual {
+      width: 100%; height: 100%; background: linear-gradient(145deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%);
+      display: flex; align-items: center; justify-content: center; flex-direction: column;
+      gap: 24px; padding: 80px 40px;
+    }
+    .hero-card-float {
+      background: white; border-radius: 20px; padding: 24px 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08); width: 100%; max-width: 320px;
+      transition: transform var(--transition);
+    }
+    .hero-card-float:hover { transform: translateY(-6px); }
+    .hero-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .hero-card-icon { width: 40px; height: 40px; background: var(--blue-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .hero-card-title { font-weight: 700; font-size: 15px; }
+    .hero-card-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+    .hero-card-bar { height: 6px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+    .hero-card-bar-fill { height: 100%; background: var(--blue); border-radius: 99px; width: 0; transition: width 1.5s ease 0.5s; }
+    .rating-row { display: flex; align-items: center; gap: 6px; }
+    .stars { color: #F59E0B; letter-spacing: 2px; }
+    .rating-text { font-size: 13px; color: var(--gray-600); font-weight: 500; }
+
+    /* ─── SECTION LAYOUT ─── */
+    .section { padding: 120px 80px; }
+    .section-sm { padding: 80px 80px; }
+    .section-dark { background: var(--black); color: var(--white); }
+    .section-gray { background: var(--gray-50); }
+    .section-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(32px, 4vw, 54px); font-weight: 900; line-height: 1.08;
+      letter-spacing: -2px; margin-bottom: 20px;
+    }
+    .section-sub {
+      font-size: 18px; color: var(--gray-600); line-height: 1.65; max-width: 560px;
+    }
+    .section-header { margin-bottom: 72px; }
+    .section-header.centered { text-align: center; }
+    .section-header.centered .section-sub { margin: 0 auto; }
+
+    /* ─── INTRO BAND ─── */
+    .intro-band { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .intro-text h2 { font-size: clamp(28px,3.5vw,48px); font-weight: 900; letter-spacing:-1.5px; line-height:1.1; margin-bottom: 20px; }
+    .intro-text p { color: var(--gray-600); font-size: 17px; line-height:1.7; margin-bottom: 16px; }
+    .intro-features { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
+    .intro-feature { display: flex; align-items: center; gap: 14px; font-size: 15px; font-weight: 500; }
+    .intro-feature-icon { width: 36px; height: 36px; background: var(--blue-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .intro-visual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .intro-visual-card {
+      background: var(--gray-100); border-radius: var(--radius); padding: 32px 24px;
+      text-align: center; transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .intro-visual-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+    .intro-visual-card .num { font-size: 38px; font-weight: 900; letter-spacing: -1px; color: var(--blue); }
+    .intro-visual-card .lbl { font-size: 13px; color: var(--gray-600); font-weight: 500; margin-top: 4px; }
+    .intro-visual-card:first-child { background: var(--blue); }
+    .intro-visual-card:first-child .num, .intro-visual-card:first-child .lbl { color: white; }
+
+    /* ─── SERVICE CARDS ─── */
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .service-card {
+      border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 36px 32px;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      position: relative; overflow: hidden; background: white;
+    }
+    .service-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: var(--blue); transform: scaleX(0); transform-origin: left;
+      transition: transform var(--transition);
+    }
+    .service-card:hover { transform: translateY(-8px); border-color: transparent; box-shadow: 0 24px 56px rgba(0,0,0,0.1); }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-icon { font-size: 36px; margin-bottom: 20px; }
+    .service-card h3 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; }
+    .service-card p { font-size: 15px; color: var(--gray-600); line-height: 1.65; margin-bottom: 24px; }
+    .service-link { font-size: 14px; font-weight: 700; color: var(--blue); display: flex; align-items: center; gap: 6px; }
+    .service-link svg { transition: transform var(--transition); }
+    .service-card:hover .service-link svg { transform: translateX(4px); }
+
+    /* ─── PROCESS ─── */
+    .process-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; position: relative; }
+    .process-grid::before {
+      content: ''; position: absolute; top: 28px; left: 10%; right: 10%; height: 2px;
+      background: linear-gradient(90deg, var(--blue) 0%, var(--blue-light) 100%); z-index: 0;
+    }
+    .process-step { text-align: center; padding: 0 24px; position: relative; z-index: 1; }
+    .process-num {
+      width: 56px; height: 56px; border-radius: 50%; background: var(--blue); color: white;
+      font-size: 18px; font-weight: 900; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px; box-shadow: 0 0 0 8px var(--blue-light);
+    }
+    .process-step h4 { font-size: 16px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.3px; }
+    .process-step p { font-size: 14px; color: var(--gray-600); line-height: 1.6; }
+
+    /* ─── TESTIMONIALS ─── */
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .testimonial-card {
+      background: white; border: 1px solid var(--gray-200); border-radius: var(--radius);
+      padding: 32px; transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .testimonial-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(0,0,0,0.08); }
+    .testimonial-stars { color: #F59E0B; font-size: 16px; letter-spacing: 3px; margin-bottom: 16px; }
+    .testimonial-text { font-size: 15px; line-height: 1.7; color: var(--gray-800); margin-bottom: 24px; font-style: italic; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .testimonial-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: white; }
+    .testimonial-name { font-weight: 700; font-size: 14px; }
+    .testimonial-location { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+    /* ─── CTA BAND ─── */
+    .cta-band {
+      background: var(--black); border-radius: 24px; padding: 80px; text-align: center;
+      position: relative; overflow: hidden; margin: 0 80px;
+    }
+    .cta-band::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 60% 0%, rgba(37,99,235,0.3) 0%, transparent 60%);
+    }
+    .cta-band * { position: relative; }
+    .cta-band h2 { font-size: clamp(32px,4vw,56px); font-weight: 900; letter-spacing: -2px; color: white; margin-bottom: 16px; line-height: 1.05; }
+    .cta-band p { font-size: 18px; color: var(--gray-400); margin-bottom: 40px; }
+    .cta-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .btn-white { background: white; color: var(--black); padding: 16px 36px; border-radius: 100px; font-size: 16px; font-weight: 700; transition: transform var(--transition), box-shadow var(--transition); letter-spacing: -0.2px; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,255,255,0.2); }
+    .btn-outline-white { background: transparent; color: white; padding: 16px 36px; border-radius: 100px; font-size: 16px; font-weight: 600; border: 2px solid rgba(255,255,255,0.2); transition: border-color var(--transition), transform var(--transition); letter-spacing: -0.2px; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-outline-white:hover { border-color: rgba(255,255,255,0.6); transform: translateY(-2px); }
+
+    /* ─── ABOUT PAGE ─── */
+    .about-hero { padding: 160px 80px 80px; background: var(--gray-50); }
+    .about-hero h1 { font-size: clamp(44px,6vw,80px); font-weight: 900; letter-spacing: -3px; line-height:1.0; max-width: 780px; }
+    .about-hero h1 em { color: var(--blue); font-style: normal; }
+    .about-hero p { font-size: 20px; color: var(--gray-600); line-height: 1.7; max-width: 600px; margin-top: 24px; }
+    .about-story { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .about-story-text h2 { font-size: clamp(28px,3vw,44px); font-weight: 900; letter-spacing: -1.5px; margin-bottom: 24px; line-height: 1.1; }
+    .about-story-text p { font-size: 16px; line-height: 1.8; color: var(--gray-600); margin-bottom: 20px; }
+    .about-timeline { display: flex; flex-direction: column; gap: 0; }
+    .timeline-item { display: flex; gap: 24px; padding-bottom: 36px; position: relative; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-line { display: flex; flex-direction: column; align-items: center; }
+    .timeline-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--blue); flex-shrink: 0; margin-top: 4px; }
+    .timeline-connector { width: 2px; flex: 1; background: var(--gray-200); margin-top: 8px; }
+    .timeline-item:last-child .timeline-connector { display: none; }
+    .timeline-year { font-size: 13px; font-weight: 700; color: var(--blue); width: 40px; flex-shrink: 0; padding-top: 2px; }
+    .timeline-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .timeline-content p { font-size: 14px; color: var(--gray-600); line-height: 1.6; }
+    .values-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .value-card { border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 40px 32px; transition: transform var(--transition), box-shadow var(--transition); }
+    .value-card:hover { transform: translateY(-8px); box-shadow: 0 24px 56px rgba(0,0,0,0.08); }
+    .value-icon { font-size: 40px; margin-bottom: 20px; }
+    .value-card h3 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; }
+    .value-card p { font-size: 15px; color: var(--gray-600); line-height: 1.7; }
+    .team-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
+    .team-card { text-align: center; }
+    .team-avatar { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900; color: white; margin: 0 auto 16px; }
+    .team-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .team-role { font-size: 13px; color: var(--gray-400); }
+
+    /* ─── SERVICES PAGE ─── */
+    .services-hero { padding: 160px 80px 80px; }
+    .services-hero h1 { font-size: clamp(44px,6vw,80px); font-weight: 900; letter-spacing: -3px; line-height:1.0; max-width: 780px; }
+    .services-hero h1 em { color: var(--blue); font-style: normal; }
+    .services-hero p { font-size: 20px; color: var(--gray-600); line-height: 1.7; max-width: 600px; margin-top: 24px; }
+    .service-full { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; padding: 80px 0; border-bottom: 1px solid var(--gray-200); }
+    .service-full:last-child { border-bottom: none; }
+    .service-full.reverse { direction: rtl; }
+    .service-full.reverse > * { direction: ltr; }
+    .service-full-icon { font-size: 64px; margin-bottom: 24px; }
+    .service-full h2 { font-size: clamp(28px,3vw,44px); font-weight: 900; letter-spacing:-1.5px; margin-bottom: 16px; line-height:1.1; }
+    .service-full p { font-size: 16px; color: var(--gray-600); line-height: 1.75; margin-bottom: 24px; }
+    .service-features-list { display: flex; flex-direction: column; gap: 12px; }
+    .service-feature-item { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 500; }
+    .check { width: 22px; height: 22px; background: var(--blue-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .check svg { width: 12px; height: 12px; stroke: var(--blue); stroke-width: 2.5; fill: none; }
+    .service-visual { background: linear-gradient(145deg, #EFF6FF, #DBEAFE); border-radius: var(--radius); padding: 60px 40px; text-align: center; font-size: 80px; }
+    .price-band { background: var(--black); border-radius: 24px; padding: 80px; margin: 0; }
+    .price-band h2 { font-size: clamp(28px,3vw,44px); font-weight: 900; letter-spacing: -1.5px; color: white; text-align: center; margin-bottom: 56px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .pricing-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); padding: 40px 32px; transition: background var(--transition), border-color var(--transition); }
+    .pricing-card.featured { background: var(--blue); border-color: var(--blue); }
+    .pricing-card:hover { background: rgba(255,255,255,0.08); }
+    .pricing-card.featured:hover { background: var(--blue-dark); }
+    .pricing-name { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-400); margin-bottom: 16px; }
+    .pricing-card.featured .pricing-name { color: rgba(255,255,255,0.7); }
+    .pricing-price { font-size: 48px; font-weight: 900; letter-spacing: -2px; color: white; margin-bottom: 4px; }
+    .pricing-period { font-size: 13px; color: var(--gray-400); margin-bottom: 32px; }
+    .pricing-card.featured .pricing-period { color: rgba(255,255,255,0.6); }
+    .pricing-items { display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+    .pricing-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.8); }
+    .pricing-item::before { content: '✓'; color: var(--blue); font-weight: 900; flex-shrink: 0; }
+    .pricing-card.featured .pricing-item::before { color: white; }
+    .pricing-cta { display: block; text-align: center; padding: 14px; border-radius: 100px; font-weight: 700; font-size: 15px; border: 2px solid rgba(255,255,255,0.2); color: white; transition: var(--transition); }
+    .pricing-card.featured .pricing-cta { background: white; color: var(--blue); border-color: transparent; }
+    .pricing-cta:hover { border-color: white; }
+    .pricing-card.featured .pricing-cta:hover { background: rgba(255,255,255,0.9); }
+
+    /* ─── CONTACT PAGE ─── */
+    .contact-hero { padding: 160px 80px 80px; }
+    .contact-hero h1 { font-size: clamp(44px,6vw,80px); font-weight: 900; letter-spacing: -3px; line-height: 1.0; max-width: 780px; }
+    .contact-hero h1 em { color: var(--blue); font-style: normal; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+    .contact-info h2 { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-bottom: 24px; }
+    .contact-info p { font-size: 16px; color: var(--gray-600); line-height: 1.7; margin-bottom: 40px; }
+    .contact-items { display: flex; flex-direction: column; gap: 28px; }
+    .contact-item { display: flex; gap: 16px; align-items: flex-start; }
+    .contact-item-icon { width: 48px; height: 48px; background: var(--blue-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .contact-item-label { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-400); margin-bottom: 6px; }
+    .contact-item-value { font-size: 16px; font-weight: 600; color: var(--black); }
+    .contact-item-sub { font-size: 13px; color: var(--gray-400); margin-top: 2px; }
+    .contact-form { background: var(--gray-50); border-radius: 24px; padding: 56px; }
+    .form-group { margin-bottom: 24px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; color: var(--gray-600); margin-bottom: 8px; }
+    .form-control {
+      width: 100%; padding: 14px 18px; border-radius: var(--radius-sm);
+      border: 2px solid var(--gray-200); background: white; font-family: inherit;
+      font-size: 15px; color: var(--black); outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .form-control:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+    .form-control::placeholder { color: var(--gray-400); }
+    textarea.form-control { resize: vertical; min-height: 120px; }
+    select.form-control { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+    .form-submit { width: 100%; padding: 16px; border-radius: 100px; background: var(--blue); color: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: background var(--transition), transform var(--transition), box-shadow var(--transition); letter-spacing: -0.2px; border: none; font-family: inherit; }
+    .form-submit:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,99,235,0.35); }
+    .form-success { display: none; text-align: center; padding: 40px; }
+    .form-success-icon { font-size: 56px; margin-bottom: 16px; }
+    .form-success h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .form-success p { color: var(--gray-600); }
+
+    /* ─── FOOTER ─── */
+    footer { background: var(--black); color: var(--white); padding: 80px 80px 40px; }
+    .footer-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 56px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .footer-brand-logo { font-weight: 800; font-size: 18px; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .footer-brand-logo-mark { width: 32px; height: 32px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .footer-brand-logo-mark svg { width: 18px; height: 18px; fill: white; }
+    .footer-brand p { font-size: 14px; color: var(--gray-400); line-height: 1.7; max-width: 260px; margin-bottom: 24px; }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background var(--transition), border-color var(--transition); cursor: pointer; }
+    .footer-social-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+    .footer-col h4 { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray-400); margin-bottom: 20px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 12px; }
+    .footer-col ul li a { font-size: 14px; color: rgba(255,255,255,0.6); transition: color var(--transition); }
+    .footer-col ul li a:hover { color: white; }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 32px; }
+    .footer-copy { font-size: 13px; color: var(--gray-400); }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { font-size: 13px; color: var(--gray-400); transition: color var(--transition); }
+    .footer-legal a:hover { color: white; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .navbar { padding: 0 32px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .section, .section-sm { padding: 80px 40px; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 60px 40px; }
+      .hero-right { display: none; }
+      .intro-band, .about-story, .contact-grid, .service-full { grid-template-columns: 1fr; gap: 40px; }
+      .services-grid, .values-grid, .testimonials-grid { grid-template-columns: 1fr 1fr; }
+      .process-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .process-grid::before { display: none; }
+      .team-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+      .about-hero, .services-hero, .contact-hero { padding: 140px 40px 60px; }
+      .cta-band { margin: 0 40px; padding: 60px 40px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+      footer { padding: 60px 40px 32px; }
+      .service-full.reverse { direction: ltr; }
+      .price-band { border-radius: 16px; padding: 60px 40px; }
+    }
+    @media (max-width: 640px) {
+      .section, .section-sm { padding: 60px 24px; }
+      .services-grid, .values-grid, .testimonials-grid, .team-grid, .intro-visual-grid { grid-template-columns: 1fr; }
+      .hero-stats { flex-wrap: wrap; gap: 24px; }
+      .hero-actions { flex-direction: column; align-items: flex-start; }
+      .hero-left { padding: 40px 24px; }
+      .about-hero, .services-hero, .contact-hero { padding: 120px 24px 48px; }
+      .cta-band { margin: 0 24px; padding: 48px 24px; }
+      footer { padding: 48px 24px 24px; }
+      .footer-top { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .contact-form { padding: 32px 24px; }
+      .process-grid { grid-template-columns: 1fr; }
+      .navbar { padding: 0 24px; }
+    }
+
+    /* ─── UTILITY ─── */
+    .divider { height: 1px; background: var(--gray-200); }
+
+    /* ─── ANIMATED BACKGROUND ─── */
+    #bg-canvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+    body > *:not(#bg-canvas) { position: relative; z-index: 1; }
+
+    /* Hero blobs */
+    .hero-blobs {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;
+    }
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.12;
+      animation: blobFloat linear infinite;
+    }
+    .blob-1 { width: 500px; height: 500px; background: #2563EB; top: -100px; left: -100px; animation-duration: 18s; animation-delay: 0s; }
+    .blob-2 { width: 350px; height: 350px; background: #7C3AED; top: 40%; left: 20%; animation-duration: 24s; animation-delay: -8s; }
+    .blob-3 { width: 280px; height: 280px; background: #06B6D4; bottom: -50px; right: 5%; animation-duration: 20s; animation-delay: -4s; }
+    @keyframes blobFloat {
+      0%   { transform: translate(0px,   0px)   scale(1); }
+      25%  { transform: translate(40px, -30px)  scale(1.05); }
+      50%  { transform: translate(-20px, 40px)  scale(0.95); }
+      75%  { transform: translate(-40px, -20px) scale(1.03); }
+      100% { transform: translate(0px,   0px)   scale(1); }
+    }
+    .hero-left { z-index: 1; }
+
+    /* Dot-grid overlay on white sections */
+    .dot-bg {
+      background-image: radial-gradient(circle, #d1d5db 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* Section orbs */
+    .orb-container { position: relative; overflow: hidden; }
+    .orb {
+      position: absolute; border-radius: 50%; pointer-events: none;
+      filter: blur(60px); opacity: 0.07; animation: orbDrift ease-in-out infinite alternate;
+    }
+    @keyframes orbDrift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(var(--dx, 30px), var(--dy, -20px)) scale(1.1); }
+    }
+
+    /* Floating grid lines in dark footer */
+    .grid-lines {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden; opacity: 0.04;
+      background-image: linear-gradient(rgba(255,255,255,1) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- ═══════════════════════ NAVBAR ═══════════════════════ -->
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="#" onclick="showPage('home')">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+    </div>
+    Paris Express
+  </a>
+  <div class="nav-links">
+    <a href="#" onclick="showPage('home'); return false;">Accueil</a>
+    <a href="#" onclick="showPage('services'); return false;">Services</a>
+    <a href="#" onclick="showPage('about'); return false;">À propos</a>
+    <a href="#" onclick="showPage('contact'); return false;">Contact</a>
+  </div>
+  <a class="nav-cta" href="#" onclick="showPage('contact'); return false;">Devis gratuit</a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════ MOBILE MENU ═══════════════════════ -->
+<div class="mobile-menu" id="mobileMenu">
+  <span class="mobile-close" id="mobileClose">✕</span>
+  <a href="#" onclick="showPage('home');closeMobileMenu();return false;">Accueil</a>
+  <a href="#" onclick="showPage('services');closeMobileMenu();return false;">Services</a>
+  <a href="#" onclick="showPage('about');closeMobileMenu();return false;">À propos</a>
+  <a href="#" onclick="showPage('contact');closeMobileMenu();return false;">Contact</a>
+  <a href="#" onclick="showPage('contact');closeMobileMenu();return false;" style="background:var(--blue);color:white;padding:16px 48px;border-radius:100px;font-weight:700;font-size:18px;">Devis gratuit</a>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--                      PAGE: HOME                        -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-blobs">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+    </div>
+    <div class="hero-left">
+      <div class="hero-badge reveal"><div class="hero-badge-dot"></div> N°1 du déménagement à Paris</div>
+      <h1 class="hero-title reveal reveal-delay-1">Votre déménagement,<br><em>sans le stress.</em></h1>
+      <p class="hero-sub reveal reveal-delay-2">De Paris à toute la France, nous gérons chaque aspect de votre déménagement avec précision, soin et une équipe d'experts passionnés.</p>
+      <div class="hero-actions reveal reveal-delay-3">
+        <a class="btn-primary" href="#" onclick="showPage('contact');return false;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Demander un devis
+        </a>
+        <a class="btn-secondary" href="#" onclick="showPage('services');return false;">Voir nos services</a>
+      </div>
+      <div class="hero-stats reveal reveal-delay-4">
+        <div>
+          <div class="hero-stat-number" data-count="1200">0</div>
+          <div class="hero-stat-label">Déménagements réalisés</div>
+        </div>
+        <div>
+          <div class="hero-stat-number" data-count="98">0</div>
+          <div class="hero-stat-label">% de clients satisfaits</div>
+        </div>
+        <div>
+          <div class="hero-stat-number" data-count="12">0</div>
+          <div class="hero-stat-label">Années d'expérience</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-visual">
+        <div class="hero-card-float">
+          <div class="hero-card-top">
+            <div class="hero-card-icon">📦</div>
+            <div>
+              <div class="hero-card-title">Déménagement Martin</div>
+              <div class="hero-card-sub">75015 → 92100 Boulogne</div>
+            </div>
+          </div>
+          <div class="hero-card-bar"><div class="hero-card-bar-fill" style="width: 72%"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;">
+            <span style="font-size:12px;color:var(--gray-400)">En cours • J-2</span>
+            <span style="font-size:12px;font-weight:700;color:var(--blue)">72%</span>
+          </div>
+        </div>
+        <div class="hero-card-float">
+          <div class="rating-row" style="margin-bottom:12px;">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.9/5 sur 340 avis</span>
+          </div>
+          <p style="font-size:14px;color:var(--gray-600);line-height:1.6;font-style:italic;">"Équipe ponctuelle, soigneuse et professionnelle. Je recommande sans hésiter !"</p>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
+            <div class="testimonial-avatar" style="width:32px;height:32px;font-size:12px;background:var(--blue);font-weight:900;">SL</div>
+            <span style="font-size:13px;font-weight:600;">Sophie L., Paris 16e</span>
+          </div>
+        </div>
+        <div class="hero-card-float" style="background:#0A0A0A;color:white;">
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;font-weight:600;">Disponibilité</div>
+          <div style="font-size:22px;font-weight:900;letter-spacing:-0.5px;">Cette semaine ✓</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:4px;">Réservez maintenant, déménagez sereinement</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTRO BAND -->
+  <section class="section dot-bg">
+    <div class="intro-band">
+      <div class="intro-text reveal">
+        <div class="section-label">Qui sommes-nous</div>
+        <h2>Une équipe dédiée à votre tranquillité d'esprit</h2>
+        <p>Fondée en 2012, Paris Express Déménagement est née d'une vision simple : rendre le déménagement agréable. Depuis, nous avons accompagné plus de 1 200 familles et entreprises dans leurs transitions.</p>
+        <p>Notre approche ? Une équipe certifiée, du matériel professionnel de pointe et une transparence totale sur chaque étape.</p>
+        <div class="intro-features">
+          <div class="intro-feature"><div class="intro-feature-icon">🛡️</div>Assurance tous risques incluse</div>
+          <div class="intro-feature"><div class="intro-feature-icon">⚡</div>Devis gratuit sous 24h</div>
+          <div class="intro-feature"><div class="intro-feature-icon">🌿</div>Démarche éco-responsable</div>
+        </div>
+      </div>
+      <div class="intro-visual-grid reveal reveal-delay-2">
+        <div class="intro-visual-card">
+          <div class="num">1 200+</div>
+          <div class="lbl">Déménagements</div>
+        </div>
+        <div class="intro-visual-card">
+          <div class="num">98%</div>
+          <div class="lbl">Satisfaction client</div>
+        </div>
+        <div class="intro-visual-card">
+          <div class="num">12</div>
+          <div class="lbl">Ans d'expérience</div>
+        </div>
+        <div class="intro-visual-card">
+          <div class="num">24h</div>
+          <div class="lbl">Délai de réponse</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider" style="margin: 0 80px;"></div>
+
+  <!-- SERVICES -->
+  <section class="section">
+    <div class="section-header centered">
+      <div class="section-label reveal">Nos prestations</div>
+      <h2 class="section-title reveal reveal-delay-1">Tout ce dont vous avez besoin</h2>
+      <p class="section-sub reveal reveal-delay-2">De l'emballage à la livraison, nous prenons en charge chaque détail pour que votre déménagement soit une expérience sans accroc.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon">🏠</div>
+        <h3>Déménagement résidentiel</h3>
+        <p>Studio, appartement ou maison — nous adaptons notre équipe et notre matériel à la taille de votre logement avec une précision chirurgicale.</p>
+        <div class="service-link">En savoir plus <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-icon">🏢</div>
+        <h3>Déménagement d'entreprise</h3>
+        <p>Bureaux, archives et mobilier professionnel. Nous intervenons en dehors de vos heures d'ouverture pour ne pas perturber votre activité.</p>
+        <div class="service-link">En savoir plus <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-icon">📦</div>
+        <h3>Emballage & protection</h3>
+        <p>Nos équipes emballent chaque objet avec soin — vaisselle fragile, œuvres d'art, appareils électroniques. Rien n'est laissé au hasard.</p>
+        <div class="service-link">En savoir plus <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-icon">🚛</div>
+        <h3>Transport longue distance</h3>
+        <p>Paris, province ou DOM-TOM : notre flotte de véhicules récents assure des livraisons sécurisées sur tout le territoire français.</p>
+        <div class="service-link">En savoir plus <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-icon">🗄️</div>
+        <h3>Garde-meubles & stockage</h3>
+        <p>Besoin de stocker temporairement ? Nos entrepôts sécurisés, climatisés et surveillés 24h/24 accueillent vos affaires en toute sérénité.</p>
+        <div class="service-link">En savoir plus <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-icon">🔧</div>
+        <h3>Montage & installation</h3>
+        <p>Démontage et remontage de meubles, raccordement électroménager — notre équipe s'occupe de tout pour que vous soyez chez vous dès le premier soir.</p>
+        <div class="service-link">En savoir plus <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="section section-gray orb-container">
+    <div class="orb" style="width:400px;height:400px;background:#2563EB;top:-100px;right:-80px;--dx:-40px;--dy:30px;animation-duration:12s;"></div>
+    <div class="orb" style="width:300px;height:300px;background:#7C3AED;bottom:-80px;left:5%;--dx:30px;--dy:-20px;animation-duration:15s;animation-delay:-5s;"></div>
+    <div class="section-header centered">
+      <div class="section-label reveal">Comment ça marche</div>
+      <h2 class="section-title reveal reveal-delay-1">Simple, rapide, efficace</h2>
+    </div>
+    <div class="process-grid">
+      <div class="process-step reveal">
+        <div class="process-num">1</div>
+        <h4>Demandez un devis</h4>
+        <p>Remplissez notre formulaire en 2 minutes. Nous vous contactons sous 24h avec un devis transparent.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-1">
+        <div class="process-num">2</div>
+        <h4>Planification sur-mesure</h4>
+        <p>Un expert visite votre logement (ou visioconférence) pour établir un plan de déménagement précis.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="process-num">3</div>
+        <h4>Emballage & chargement</h4>
+        <p>Notre équipe arrive à l'heure, emballe et charge vos affaires avec le plus grand soin.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="process-num">4</div>
+        <h4>Installation chez vous</h4>
+        <p>Livraison, montage, mise en place — vous n'avez plus qu'à profiter de votre nouveau chez-vous.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section">
+    <div class="section-header centered">
+      <div class="section-label reveal">Témoignages</div>
+      <h2 class="section-title reveal reveal-delay-1">Ce que disent nos clients</h2>
+      <p class="section-sub reveal reveal-delay-2">Ces avis sont des exemples fictifs représentant la qualité de service que nous visons quotidiennement.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Équipe au top, ponctuelle et très soigneuse. Mes objets fragiles sont arrivés impeccables. Je recommande Paris Express sans la moindre hésitation !"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background: #2563EB;">ML</div>
+          <div>
+            <div class="testimonial-name">Marie-Laure Bonnet</div>
+            <div class="testimonial-location">Paris 8e → Neuilly-sur-Seine</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Un déménagement de bureau pour 40 personnes réalisé en un week-end. Aucun dommage, aucun retard. Professionnalisme exemplaire."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background: #7C3AED;">TC</div>
+          <div>
+            <div class="testimonial-name">Thomas Chevallier</div>
+            <div class="testimonial-location">DRH, Cabinet Conseil Paris</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Devis clair, prix honnête, équipe sympathique. Mon piano à queue a été déménagé comme s'il était leur trésor. Bravo à toute l'équipe !"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background: #059669;">AF</div>
+          <div>
+            <div class="testimonial-name">Amélie Fontaine</div>
+            <div class="testimonial-location">Lyon → Paris 15e</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <div style="padding: 0 0 120px;">
+    <div class="cta-band reveal">
+      <h2>Prêt pour votre prochain chapitre ?</h2>
+      <p>Demandez votre devis gratuit en 2 minutes et obtenez une réponse sous 24h.</p>
+      <div class="cta-actions">
+        <a class="btn-white" href="#" onclick="showPage('contact');return false;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Obtenir un devis gratuit
+        </a>
+        <a class="btn-outline-white" href="tel:+33612345678">📞 +33 6 12 34 56 78</a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-home -->
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--                    PAGE: SERVICES                      -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="page" id="page-services">
+
+  <div class="services-hero orb-container" style="overflow:hidden;">
+    <div class="orb" style="width:450px;height:450px;background:#2563EB;top:-120px;right:0;--dx:-40px;--dy:30px;animation-duration:16s;opacity:0.08;filter:blur(80px);"></div>
+    <div class="section-label reveal">Nos services</div>
+    <h1 reveal class="reveal">Chaque déménagement<br><em>mérite l'excellence</em></h1>
+    <p class="reveal reveal-delay-1">Six prestations pensées pour couvrir tous vos besoins, du simple emballage à la relocalisation d'entreprise complète.</p>
+  </div>
+
+  <section class="section" style="padding-top: 0;">
+    <div class="service-full reveal">
+      <div>
+        <div class="service-full-icon">🏠</div>
+        <h2>Déménagement résidentiel</h2>
+        <p>Studio en hypercentre ou maison de banlieue, nous adaptons notre équipe et notre flotte à chaque configuration. Nos chefs d'équipe certifiés coordonnent chaque étape, du premier carton à la dernière caisse posée.</p>
+        <p>Chaque déménagement résidentiel inclut une visite préalable (physique ou en visio), un plan de chargement optimisé et une assurance tous risques.</p>
+        <div class="service-features-list">
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Visite technique gratuite</div>
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Équipe de 2 à 6 déménageurs</div>
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Matériel de protection inclus</div>
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Assurance responsabilité civile</div>
+        </div>
+      </div>
+      <div class="service-visual reveal reveal-delay-2">🏠<br><br><span style="font-size:16px;font-weight:600;color:var(--blue)">Logements déménagés<br><span style="font-size:32px;font-weight:900;color:var(--black)">850+</span></span></div>
+    </div>
+
+    <div class="service-full reverse reveal">
+      <div>
+        <div class="service-full-icon">🏢</div>
+        <h2>Déménagement d'entreprise</h2>
+        <p>La relocalisation d'une entreprise exige une coordination sans failles. Nous travaillons en étroite collaboration avec votre équipe IT, vos RH et vos prestataires pour un déménagement zéro downtime.</p>
+        <p>Intervention possible en soirée, la nuit ou le week-end pour préserver la continuité de votre activité.</p>
+        <div class="service-features-list">
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Étiquetage numérique des postes</div>
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Transport sécurisé du matériel IT</div>
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Intervention hors heures ouvrées</div>
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Coordinateur dédié sur site</div>
+        </div>
+      </div>
+      <div class="service-visual reveal reveal-delay-2">🏢<br><br><span style="font-size:16px;font-weight:600;color:var(--blue)">Entreprises accompagnées<br><span style="font-size:32px;font-weight:900;color:var(--black)">120+</span></span></div>
+    </div>
+
+    <div class="service-full reveal">
+      <div>
+        <div class="service-full-icon">📦</div>
+        <h2>Emballage & protection professionnelle</h2>
+        <p>Nos équipes utilisent exclusivement du matériel d'emballage professionnel : cartons doubles cannelures, papier de soie acide-free, bulles anti-choc et sangles de maintien homologuées.</p>
+        <p>Vaisselle, tableaux, antiquités, vêtements — chaque catégorie bénéficie de son protocole d'emballage spécifique.</p>
+        <div class="service-features-list">
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Cartons professionnels fournis</div>
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Emballage spécial objets fragiles</div>
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Housses piano & penderies</div>
+          <div class="service-feature-item"><div class="check"><svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg></div>Déballage et installation option</div>
+        </div>
+      </div>
+      <div class="service-visual reveal reveal-delay-2">📦<br><br><span style="font-size:16px;font-weight:600;color:var(--blue)">Objets emballés sans casse<br><span style="font-size:32px;font-weight:900;color:var(--black)">99.8%</span></span></div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="section" style="padding-top: 0;">
+    <div class="price-band">
+      <h2>Des tarifs clairs, sans surprise</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card reveal">
+          <div class="pricing-name">Essentiel</div>
+          <div class="pricing-price">À partir de 490€</div>
+          <div class="pricing-period">Pour studio & T2 · Île-de-France</div>
+          <div class="pricing-items">
+            <div class="pricing-item">2 déménageurs + camion 20m³</div>
+            <div class="pricing-item">Matériel de protection inclus</div>
+            <div class="pricing-item">Assurance de base</div>
+            <div class="pricing-item">Devis en 24h</div>
+          </div>
+          <a class="pricing-cta" href="#" onclick="showPage('contact');return false;">Demander un devis</a>
+        </div>
+        <div class="pricing-card featured reveal reveal-delay-1">
+          <div class="pricing-name">Premium</div>
+          <div class="pricing-price">À partir de 890€</div>
+          <div class="pricing-period">Pour T3-T4 · France entière</div>
+          <div class="pricing-items">
+            <div class="pricing-item">4 déménageurs + camion 40m³</div>
+            <div class="pricing-item">Emballage professionnel complet</div>
+            <div class="pricing-item">Assurance tous risques</div>
+            <div class="pricing-item">Montage/démontage meubles</div>
+          </div>
+          <a class="pricing-cta" href="#" onclick="showPage('contact');return false;">Demander un devis</a>
+        </div>
+        <div class="pricing-card reveal reveal-delay-2">
+          <div class="pricing-name">Entreprise</div>
+          <div class="pricing-price">Sur devis</div>
+          <div class="pricing-period">Bureaux & locaux professionnels</div>
+          <div class="pricing-items">
+            <div class="pricing-item">Équipe dédiée & coordinateur</div>
+            <div class="pricing-item">Intervention hors horaires</div>
+            <div class="pricing-item">Transport matériel sensible</div>
+            <div class="pricing-item">Suivi en temps réel</div>
+          </div>
+          <a class="pricing-cta" href="#" onclick="showPage('contact');return false;">Nous contacter</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-services -->
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--                     PAGE: ABOUT                        -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="page" id="page-about">
+
+  <div class="about-hero section-gray orb-container">
+    <div class="orb" style="width:500px;height:500px;background:#2563EB;top:-150px;right:-100px;--dx:-50px;--dy:40px;animation-duration:14s;opacity:0.09;filter:blur(80px);"></div>
+    <div class="orb" style="width:300px;height:300px;background:#06B6D4;bottom:-50px;left:10%;--dx:30px;--dy:-20px;animation-duration:18s;animation-delay:-7s;opacity:0.07;filter:blur(60px);"></div>
+    <div class="section-label reveal">Notre histoire</div>
+    <h1 class="reveal reveal-delay-1">Nés à Paris,<br>passionnés par<br><em>le soin du détail</em></h1>
+    <p class="reveal reveal-delay-2">Depuis 2012, nous accompagnons les Parisiens et les entreprises dans leurs transitions avec rigueur, bienveillance et un savoir-faire éprouvé.</p>
+  </div>
+
+  <!-- STORY -->
+  <section class="section">
+    <div class="about-story">
+      <div class="about-story-text reveal">
+        <h2>De deux associés à une équipe de 35 experts</h2>
+        <p>Paris Express Déménagement est née en 2012 d'une rencontre entre Julien Marchand et Éric Beaumont, deux amis aux parcours complémentaires — l'un logisticien, l'autre entrepreneur. Frustrés par la mauvaise réputation du secteur du déménagement, ils ont décidé de prouver que ce métier pouvait être exercé avec excellence.</p>
+        <p>Avec un seul camion, deux associés et une obsession du service client, ils ont rapidement construit une réputation de sérieux dans le 15e arrondissement. Bouche à oreille aidant, la demande a explosé. Aujourd'hui, l'équipe compte 35 professionnels certifiés, une flotte de 12 véhicules et deux entrepôts en Île-de-France.</p>
+        <p>Notre philosophie n'a pas changé depuis le premier jour : traiter les affaires de nos clients comme si elles étaient les nôtres.</p>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="about-timeline">
+          <div class="timeline-item">
+            <div class="timeline-line"><div class="timeline-dot"></div><div class="timeline-connector"></div></div>
+            <div style="flex:1;">
+              <div class="timeline-year">2012</div>
+              <div class="timeline-content">
+                <h4>Fondation</h4>
+                <p>Julien et Éric lancent Paris Express avec 1 camion et 2 employés depuis le 15e.</p>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-line"><div class="timeline-dot"></div><div class="timeline-connector"></div></div>
+            <div style="flex:1;">
+              <div class="timeline-year">2015</div>
+              <div class="timeline-content">
+                <h4>Expansion</h4>
+                <p>Ouverture d'un premier entrepôt à Ivry. L'équipe passe à 12 personnes.</p>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-line"><div class="timeline-dot"></div><div class="timeline-connector"></div></div>
+            <div style="flex:1;">
+              <div class="timeline-year">2018</div>
+              <div class="timeline-content">
+                <h4>Certification NF Service</h4>
+                <p>Obtention de la certification qualité NF Service Déménagement, gage d'excellence.</p>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-line"><div class="timeline-dot"></div><div class="timeline-connector"></div></div>
+            <div style="flex:1;">
+              <div class="timeline-year">2021</div>
+              <div class="timeline-content">
+                <h4>Engagement éco-responsable</h4>
+                <p>100% flotte hybride ou électrique. Bilan carbone certifié. Emballages recyclés.</p>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-line"><div class="timeline-dot"></div></div>
+            <div style="flex:1;">
+              <div class="timeline-year">2024</div>
+              <div class="timeline-content">
+                <h4>1 200e déménagement</h4>
+                <p>Cap historique franchi. 35 collaborateurs. Présence sur toute la France.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="section section-gray">
+    <div class="section-header centered">
+      <div class="section-label reveal">Nos valeurs</div>
+      <h2 class="section-title reveal reveal-delay-1">Ce qui nous définit chaque jour</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal">
+        <div class="value-icon">⚡</div>
+        <h3>Rapidité</h3>
+        <p>Devis en 24h, disponibilité la semaine suivante, interventions ponctuelles. Le temps de nos clients est précieux — nous le respectons.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-1">
+        <div class="value-icon">🛡️</div>
+        <h3>Fiabilité</h3>
+        <p>Chaque engagement est tenu. Chaque objet est traité avec soin. Notre taux de satisfaction à 98% n'est pas le fruit du hasard — c'est le résultat d'un travail méticuleux.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-2">
+        <div class="value-icon">🤝</div>
+        <h3>Transparence</h3>
+        <p>Devis détaillé, pas de frais cachés, communication proactive. Nous vous tenons informé à chaque étape et n'ajoutons jamais de surprise sur la facture finale.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="section">
+    <div class="section-header centered">
+      <div class="section-label reveal">L'équipe dirigeante</div>
+      <h2 class="section-title reveal reveal-delay-1">Les visages derrière l'excellence</h2>
+    </div>
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div class="team-avatar" style="background: var(--blue);">JM</div>
+        <div class="team-name">Julien Marchand</div>
+        <div class="team-role">Co-fondateur & CEO</div>
+      </div>
+      <div class="team-card reveal reveal-delay-1">
+        <div class="team-avatar" style="background: #7C3AED;">EB</div>
+        <div class="team-name">Éric Beaumont</div>
+        <div class="team-role">Co-fondateur & Directeur Ops.</div>
+      </div>
+      <div class="team-card reveal reveal-delay-2">
+        <div class="team-avatar" style="background: #059669;">SD</div>
+        <div class="team-name">Sophie Durand</div>
+        <div class="team-role">Responsable Clientèle</div>
+      </div>
+      <div class="team-card reveal reveal-delay-3">
+        <div class="team-avatar" style="background: #DC2626;">KT</div>
+        <div class="team-name">Karim Talbi</div>
+        <div class="team-role">Chef d'Équipe Senior</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div style="padding: 0 0 120px;">
+    <div class="cta-band reveal">
+      <h2>Vous méritez le meilleur pour votre déménagement</h2>
+      <p>Contactez-nous dès aujourd'hui pour un devis gratuit et personnalisé.</p>
+      <div class="cta-actions">
+        <a class="btn-white" href="#" onclick="showPage('contact');return false;">Demander un devis</a>
+        <a class="btn-outline-white" href="#" onclick="showPage('services');return false;">Voir nos services</a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-about -->
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--                    PAGE: CONTACT                       -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="page" id="page-contact">
+
+  <div class="contact-hero orb-container" style="overflow:hidden;">
+    <div class="orb" style="width:400px;height:400px;background:#7C3AED;top:-100px;right:5%;--dx:-30px;--dy:40px;animation-duration:13s;opacity:0.08;filter:blur(70px);"></div>
+    <div class="section-label reveal">Contact</div>
+    <h1 class="reveal reveal-delay-1">Parlons de votre<br><em>déménagement</em></h1>
+  </div>
+
+  <section class="section" style="padding-top: 0;">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <h2>Nous sommes à votre écoute</h2>
+        <p>Que ce soit pour un devis, une question ou simplement pour échanger sur votre projet, notre équipe répond sous 24h, jours ouvrés.</p>
+        <div class="contact-items">
+          <div class="contact-item">
+            <div class="contact-item-icon">📍</div>
+            <div>
+              <div class="contact-item-label">Adresse</div>
+              <div class="contact-item-value">12 rue des Peupliers</div>
+              <div class="contact-item-sub">75015 Paris, France</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">📞</div>
+            <div>
+              <div class="contact-item-label">Téléphone</div>
+              <div class="contact-item-value">+33 6 12 34 56 78</div>
+              <div class="contact-item-sub">Lun–Ven 8h–19h · Sam 9h–17h</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">✉️</div>
+            <div>
+              <div class="contact-item-label">Email</div>
+              <div class="contact-item-value">contact@parisexpress.fr</div>
+              <div class="contact-item-sub">Réponse garantie sous 24h</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">⏱️</div>
+            <div>
+              <div class="contact-item-label">Délai de réponse</div>
+              <div class="contact-item-value">Moins de 24h</div>
+              <div class="contact-item-sub">Devis détaillé et sans engagement</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form reveal reveal-delay-2">
+        <div id="contactFormWrap">
+          <h3 style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;">Demandez votre devis gratuit</h3>
+          <p style="font-size:14px;color:var(--gray-400);margin-bottom:32px;">Sans engagement · Réponse sous 24h</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="fname">Prénom</label>
+              <input class="form-control" id="fname" type="text" placeholder="Marie" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lname">Nom</label>
+              <input class="form-control" id="lname" type="text" placeholder="Dupont" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="email">Email</label>
+              <input class="form-control" id="email" type="email" placeholder="marie@exemple.fr" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone">Téléphone</label>
+              <input class="form-control" id="phone" type="tel" placeholder="+33 6 00 00 00 00" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="service">Type de déménagement</label>
+            <select class="form-control" id="service">
+              <option value="">Sélectionnez un service…</option>
+              <option>Déménagement résidentiel</option>
+              <option>Déménagement d'entreprise</option>
+              <option>Emballage & protection</option>
+              <option>Garde-meubles & stockage</option>
+              <option>Transport longue distance</option>
+              <option>Montage & installation</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="from">Adresse de départ</label>
+              <input class="form-control" id="from" type="text" placeholder="Paris 11e" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="to">Adresse d'arrivée</label>
+              <input class="form-control" id="to" type="text" placeholder="Lyon 3e" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="date">Date souhaitée</label>
+            <input class="form-control" id="date" type="date" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message">Informations complémentaires</label>
+            <textarea class="form-control" id="message" placeholder="Volume estimé, objets particuliers, contraintes d'accès…"></textarea>
+          </div>
+          <button class="form-submit" onclick="submitForm()">
+            Envoyer ma demande →
+          </button>
+        </div>
+        <div class="form-success" id="formSuccess">
+          <div class="form-success-icon">🎉</div>
+          <h3>Message envoyé !</h3>
+          <p>Merci pour votre demande. Notre équipe vous contactera sous 24h ouvrées avec un devis personnalisé.</p>
+          <br>
+          <a href="tel:+33612345678" style="font-size:15px;font-weight:600;color:var(--blue);">📞 Besoin urgent ? Appelez-nous</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAP PLACEHOLDER -->
+  <section class="section section-gray" style="padding: 0;">
+    <div style="height: 320px; background: linear-gradient(135deg, #EFF6FF, #DBEAFE); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
+      <div style="font-size:48px;">📍</div>
+      <div style="font-size:18px;font-weight:700;letter-spacing:-0.3px;">12 rue des Peupliers, 75015 Paris</div>
+      <div style="font-size:14px;color:var(--gray-600);">Métro Convention (Ligne 12) · Bus 89, 95</div>
+    </div>
+  </section>
+
+</div><!-- /page-contact -->
+
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer>
+  <div class="grid-lines"></div>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-brand-logo">
+        <div class="footer-brand-logo-mark">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        </div>
+        Paris Express Déménagement
+      </div>
+      <p>Le déménagement haut de gamme à Paris et partout en France. Fiabilité, soin et transparence depuis 2012.</p>
+      <div class="footer-social">
+        <div class="footer-social-btn">𝕏</div>
+        <div class="footer-social-btn">in</div>
+        <div class="footer-social-btn">f</div>
+        <div class="footer-social-btn">📷</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#" onclick="showPage('services');return false;">Déménagement résidentiel</a></li>
+        <li><a href="#" onclick="showPage('services');return false;">Déménagement entreprise</a></li>
+        <li><a href="#" onclick="showPage('services');return false;">Emballage & protection</a></li>
+        <li><a href="#" onclick="showPage('services');return false;">Garde-meubles</a></li>
+        <li><a href="#" onclick="showPage('services');return false;">Transport longue distance</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Entreprise</h4>
+      <ul>
+        <li><a href="#" onclick="showPage('about');return false;">À propos</a></li>
+        <li><a href="#" onclick="showPage('about');return false;">Notre équipe</a></li>
+        <li><a href="#" onclick="showPage('about');return false;">Nos valeurs</a></li>
+        <li><a href="#" onclick="showPage('contact');return false;">Contact</a></li>
+        <li><a href="#">Recrutement</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">12 rue des Peupliers<br>75015 Paris</a></li>
+        <li><a href="tel:+33612345678">+33 6 12 34 56 78</a></li>
+        <li><a href="mailto:contact@parisexpress.fr">contact@parisexpress.fr</a></li>
+        <li><a href="#" onclick="showPage('contact');return false;">Demander un devis →</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2024 Paris Express Déménagement. Tous droits réservés.</div>
+    <div class="footer-legal">
+      <a href="#">Mentions légales</a>
+      <a href="#">Politique de confidentialité</a>
+      <a href="#">CGV</a>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════ SCRIPTS ═══════════════════════ -->
+<script>
+  // ── PAGE ROUTING ──
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(initReveal, 100);
+    // Animate hero bar fills on home page
+    if (id === 'home') setTimeout(animateBars, 400);
+  }
+
+  // ── NAVBAR SCROLL ──
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // ── HAMBURGER ──
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileClose = document.getElementById('mobileClose');
+  hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+  mobileClose.addEventListener('click', closeMobileMenu);
+  function closeMobileMenu() { mobileMenu.classList.remove('open'); }
+
+  // ── SCROLL REVEAL ──
+  function initReveal() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('#page-' + currentPage() + ' .reveal:not(.visible)').forEach(el => observer.observe(el));
+  }
+  function currentPage() {
+    const active = document.querySelector('.page.active');
+    return active ? active.id.replace('page-', '') : 'home';
+  }
+
+  // ── COUNTER ANIMATION ──
+  function animateCounters() {
+    document.querySelectorAll('[data-count]').forEach(el => {
+      const target = parseInt(el.dataset.count);
+      const suffix = el.textContent.includes('%') ? '%' : (target >= 1000 ? '+' : '');
+      const duration = 2000;
+      const step = target / (duration / 16);
+      let current = 0;
+      const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = (target >= 1000 ? Math.round(current).toLocaleString('fr') : Math.round(current)) + suffix;
+        if (current >= target) clearInterval(timer);
+      }, 16);
+    });
+  }
+
+  // ── CARD BAR ANIMATION ──
+  function animateBars() {
+    document.querySelectorAll('.hero-card-bar-fill').forEach(bar => {
+      bar.style.width = bar.style.width || '72%';
+    });
+  }
+
+  // ── FORM SUBMIT ──
+  function submitForm() {
+    const form = document.getElementById('contactFormWrap');
+    const success = document.getElementById('formSuccess');
+    form.style.opacity = '0';
+    form.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => {
+      form.style.display = 'none';
+      success.style.display = 'block';
+      success.style.opacity = '0';
+      success.style.transition = 'opacity 0.4s ease';
+      setTimeout(() => success.style.opacity = '1', 50);
+    }, 300);
+  }
+
+  // ── INIT ──
+  window.addEventListener('load', () => {
+    initReveal();
+    animateBars();
+    // Counter fires when stats section enters view
+    const statsEl = document.querySelector('.hero-stats');
+    if (statsEl) {
+      const obs = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) { animateCounters(); obs.disconnect(); }
+      }, { threshold: 0.5 });
+      obs.observe(statsEl);
+    }
+  });
+  // ── PARTICLE CANVAS ──
+  (function() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [], mouse = { x: -999, y: -999 };
+    const N = 55;
+    const CONNECT_DIST = 140;
+    const MOUSE_DIST = 120;
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function Particle() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = (Math.random() - 0.5) * 0.4;
+      this.r = Math.random() * 1.5 + 0.5;
+      this.opacity = Math.random() * 0.4 + 0.1;
+    }
+
+    function init() {
+      particles = [];
+      for (let i = 0; i < N; i++) particles.push(new Particle());
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Update positions
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+
+        // Slight mouse repulsion
+        const dx = p.x - mouse.x, dy = p.y - mouse.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < MOUSE_DIST) {
+          const force = (MOUSE_DIST - dist) / MOUSE_DIST * 0.015;
+          p.vx += (dx / dist) * force;
+          p.vy += (dy / dist) * force;
+          // Clamp speed
+          const speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+          if (speed > 1.2) { p.vx /= speed; p.vy /= speed; }
+        }
+      });
+
+      // Draw connections
+      for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+          const a = particles[i], b = particles[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < CONNECT_DIST) {
+            const alpha = (1 - dist / CONNECT_DIST) * 0.12;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(37, 99, 235, ${alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw dots
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(37, 99, 235, ${p.opacity})`;
+        ctx.fill();
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('mouseleave', () => { mouse.x = -999; mouse.y = -999; });
+    window.addEventListener('resize', () => { resize(); });
+
+    resize();
+    init();
+    draw();
+  })();
+</script>
+</body>
+</html>
